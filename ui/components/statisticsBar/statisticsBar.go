@@ -2,6 +2,7 @@ package statisticsBar
 
 import (
 	"fmt"
+	"stat_by_sites/domain"
 	"stat_by_sites/ui/components/base"
 
 	"github.com/charmbracelet/bubbles/progress"
@@ -15,10 +16,18 @@ type StatisticsBar struct{
 	latency string
 }
 
-func NewStatisticsBar(width int, uptime float64, errors int, latency string) *StatisticsBar{
-	return &StatisticsBar{
-		base.Component{Width: width}, 
-		uptime, errors, latency}
+func NewStatisticsBar(width int) *StatisticsBar{
+	return &StatisticsBar{ 
+		Component: base.Component{Width: width},
+	}
+}
+
+func (sb *StatisticsBar) Update(endpoints []domain.Endpoint){
+	stats := CalculateStats(endpoints)
+
+	sb.uptime = float64(stats.Healthy) / float64(stats.Total)
+	sb.errors = stats.Errors
+	sb.latency = fmt.Sprintf("%dms", stats.AvgLatency)
 }
 
 func (sb *StatisticsBar) View() string{

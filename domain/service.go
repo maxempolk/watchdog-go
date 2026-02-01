@@ -51,6 +51,8 @@ func (es *EndpointService) CheckHealth(rawUrl string) (HealthCheckResult, error)
 	}, nil
 }
 
+
+
 // func (es *EndpointService) UpdateEndpoint()
 
 // func (es *EndpointService) RefreshEndpoints(){

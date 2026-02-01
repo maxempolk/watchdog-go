@@ -7,10 +7,10 @@ type Logs struct{
 	IsDisplayed bool
 }
 
-func NewLogs(width int) *Logs{
+func NewLogs(width int, isDisplayed bool) *Logs{
 	return &Logs{
 		base.Component{Width: width},
-		false,
+		isDisplayed,
 	}
 }
 

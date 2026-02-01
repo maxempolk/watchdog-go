@@ -49,9 +49,9 @@ func InitialModel(service *domain.EndpointService) *model {
 	return &model{
 		Service: service,
 		Header: header.NewHeader(BASE_WIDTH),
-		StatisticsBar: statisticsBar.NewStatisticsBar(BASE_WIDTH, 200, 5, "lat"),
+		StatisticsBar: statisticsBar.NewStatisticsBar(BASE_WIDTH),
 		Table: table,
-		Logs: logs.NewLogs(BASE_WIDTH),
+		Logs: logs.NewLogs(BASE_WIDTH, false),
 		CommandsHelper: commandshelper.NewCommandHelper(
 				BASE_WIDTH,
 				commands.GetAllCommands(),

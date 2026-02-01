@@ -25,7 +25,6 @@ type HealthCheckResult struct {
   Error       error
 }
 
-
 const TrendSize = 4
 
 func NewEndpoint(url string, interval time.Duration) Endpoint{
@@ -34,4 +33,8 @@ func NewEndpoint(url string, interval time.Duration) Endpoint{
     Interval: interval,
     Trend: make([]bool, TrendSize),
   }
+}
+
+func (e Endpoint) IsHealthy() bool{
+  return e.Status >= 200 && e.Status < 400
 }

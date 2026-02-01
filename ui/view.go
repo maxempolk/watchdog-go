@@ -19,7 +19,7 @@ func (m model) View() string {
 	views = append(views, EMPTY)
 	views = append(views, m.Table.View())
 	views = append(views, LINE)
-	if !m.Logs.IsDisplayed{
+	if m.Logs.IsDisplayed{
 		views = append(views, EMPTY)
 		views = append(views, m.Logs.View())
 		views = append(views, EMPTY)
