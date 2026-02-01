@@ -1,5 +1,16 @@
+# mac os
+.DS_Store
+
+# Logs
 app.log
+*.log
+
+# Runtime data
 data.json
+
+# Local notes
 task.md
 tui.example
-.vscode
+
+# Editor
+.vscode/
