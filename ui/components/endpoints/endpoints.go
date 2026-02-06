@@ -3,7 +3,7 @@ package endpoints
 import (
 	"reflect"
 	"slices"
-	"stat_by_sites/domain"
+	"stat_by_sites/domain/endpoint"
 	"strconv"
 	"strings"
 
@@ -25,7 +25,7 @@ type Endpoint struct {
 
 func (e Endpoint) generateTrendRepresentation() string{
 	// TODO: нормально ли разворачивать тут
-	reversed := make([]bool, domain.TrendSize)
+	reversed := make([]bool, endpoint.TrendSize)
 	copy(reversed, e.Trend)
 	slices.Reverse(reversed)
 

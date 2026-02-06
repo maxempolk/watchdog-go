@@ -1,0 +1,5 @@
+./handler.go
+./model.go
+./ui.go
+./update.go
+./view.go

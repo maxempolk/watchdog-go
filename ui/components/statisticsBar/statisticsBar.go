@@ -2,7 +2,7 @@ package statisticsBar
 
 import (
 	"fmt"
-	"stat_by_sites/domain"
+	"stat_by_sites/domain/endpoint"
 	"stat_by_sites/ui/components/base"
 
 	"github.com/charmbracelet/bubbles/progress"
@@ -22,7 +22,7 @@ func NewStatisticsBar(width int) *StatisticsBar{
 	}
 }
 
-func (sb *StatisticsBar) Update(endpoints []domain.Endpoint){
+func (sb *StatisticsBar) Update(endpoints []endpoint.Endpoint){
 	stats := CalculateStats(endpoints)
 
 	sb.uptime = float64(stats.Healthy) / float64(stats.Total)

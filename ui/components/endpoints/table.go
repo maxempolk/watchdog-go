@@ -3,7 +3,7 @@ package endpoints
 import (
 	"reflect"
 	"sort"
-	"stat_by_sites/domain"
+	"stat_by_sites/domain/endpoint"
 	"stat_by_sites/ui/components/base"
 	"strconv"
 
@@ -22,7 +22,7 @@ func NewTable(width int) *Table{
 	}
 }
 
-func (t *Table) Update(data []domain.Endpoint) {
+func (t *Table) Update(data []endpoint.Endpoint) {
 	sort.Slice(data, func(i, j int) bool {
 		return data[i].URL < data[j].URL
 	})

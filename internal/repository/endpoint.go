@@ -3,27 +3,27 @@ package repository
 import (
 	"fmt"
 	"log/slog"
-	"stat_by_sites/domain"
+	endpoint "stat_by_sites/domain/endpoint"
 	"sync"
 	"time"
 )
 
 type MemoryEndpointRepository struct {
 	mu        sync.RWMutex
-	endpoints map[string]domain.Endpoint
+	endpoints map[string]endpoint.Endpoint
 }
 
 func NewMemoryEndpointRepository() *MemoryEndpointRepository{
 	return &MemoryEndpointRepository{
-		endpoints: make(map[string]domain.Endpoint),
+		endpoints: make(map[string]endpoint.Endpoint),
 	}
 }
 
-func (r *MemoryEndpointRepository) Add(endpoints ...domain.EndpointConfig) error{
+func (r *MemoryEndpointRepository) Add(endpoints ...endpoint.EndpointConfig) error{
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	for _, v := range endpoints {
-		r.endpoints[v.URL] = domain.NewEndpoint(v.URL, v.Interval)
+		r.endpoints[v.URL] = endpoint.NewEndpoint(v.URL, v.Interval)
 	}
 	return nil
 }
@@ -38,7 +38,7 @@ func (r *MemoryEndpointRepository) Update(url string, status int, latency time.D
 		v.LastCheck = time.Now()
 		
 		// TODO: нужно ли хранить новые статусы в конце тренда
-		if len(v.Trend) >= domain.TrendSize {
+		if len(v.Trend) >= endpoint.TrendSize {
 			v.Trend = v.Trend[1:]
 		}
 
@@ -52,7 +52,7 @@ func (r *MemoryEndpointRepository) Update(url string, status int, latency time.D
 	return nil
 }
 
-func (r *MemoryEndpointRepository) Get(url string) (domain.Endpoint, bool) {
+func (r *MemoryEndpointRepository) Get(url string) (endpoint.Endpoint, bool) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 

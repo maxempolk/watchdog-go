@@ -24,3 +24,7 @@ func FormatDurationMs(d time.Duration) string {
 	ms := d.Milliseconds()
 	return fmt.Sprintf("%d ms", ms)
 }
+
+func FormatStatusCode(status int) string {
+	return fmt.Sprintf("[ %d ]", status)
+}

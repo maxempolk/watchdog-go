@@ -1,6 +1,6 @@
 package statisticsBar
 
-import "stat_by_sites/domain"
+import "stat_by_sites/domain/endpoint"
 
 type Stats struct {
 	Total        int
@@ -9,7 +9,7 @@ type Stats struct {
 	AvgLatency 	 int
 }
 
-func CalculateStats(endpoints []domain.Endpoint) Stats {
+func CalculateStats(endpoints []endpoint.Endpoint) Stats {
 	var healthy int
 	var latencySum int
 

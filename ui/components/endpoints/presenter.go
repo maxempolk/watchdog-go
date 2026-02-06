@@ -1,7 +1,7 @@
 package endpoints
 
 import (
-	"stat_by_sites/domain"
+	"stat_by_sites/domain/endpoint"
 	"stat_by_sites/ui/formating"
 )
 
@@ -9,7 +9,7 @@ type EndpointPresenter struct{}
 
 
 
-func (p EndpointPresenter) Present(list []domain.Endpoint) []Endpoint {
+func (p EndpointPresenter) Present(list []endpoint.Endpoint) []Endpoint {
 	out := make([]Endpoint, len(list))
 	for i, e := range list {
 		out[i] = Endpoint{
