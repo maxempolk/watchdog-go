@@ -1,60 +1,64 @@
 # Watchdog TUI
 
-**Watchdog TUI** is an educational TUI project written in Go for real-time monitoring of HTTP endpoints availability.
+Terminal UI for monitoring HTTP endpoints.
 
-The project displays:
-- current endpoint status (HTTP status code)
-- response latency
-- recent health-check history (trend)
-- aggregated system health summary
-- recent event logs
+## Quick Start
 
-The interface is implemented as a terminal UI (TUI) using **Bubble Tea** and **Lip Gloss**.
+1. Build or run directly:
+   - `go run .`
+   - or `go build -o watchdog && ./watchdog`
+2. Use one of the launch modes below.
 
----
+## Launch Modes
 
-## Features
+### 1) Default mode
 
-- Periodic health checks for endpoints
-- Immediate data refresh on startup
-- Visual indicators for status and trends
-- Tabular view of monitored endpoints
-- In-app log viewer
-- Keyboard-driven controls
+Runs with no args and loads `./data.json`.
 
----
+```bash
+go run .
+```
 
-## Tech Stack
+If `data.json` is missing, startup fails with an error.
 
-- Go
-- Bubble Tea (TUI framework)
-- Lip Gloss (styling)
-- Clean Architecture (UI / domain / repository)
+### 2) File mode
 
----
+Loads config from an explicit file path.
 
-## Project Status
+```bash
+go run . --file ./data1.json
+```
 
-⚠️ **Educational Project**
+### 3) Sites mode
 
-This project was created for learning purposes:
-- learning Go
-- building TUI applications
-- understanding Bubble Tea’s event-driven model
-- practicing separation of UI, domain, and infrastructure layers
+Pass endpoints directly in CLI as `host:interval`.
 
-It is **not intended for production use**.
+```bash
+go run . sites example.com:5s api.local:10 127.0.0.1:1m
+```
 
----
+`10` means `10s`.
+
+## Config Format
+
+```json
+{
+  "resources": [
+    { "url": "https://example.com", "interval": "5s" },
+    { "url": "https://api.example.com", "interval": "30s" }
+  ]
+}
+```
 
 ## Controls
 
-- `Q` — quit
-- `R` — manual refresh
-- `L` — show / hide logs
+- `Q` quit
+- `R` manual refresh
+- `L` show/hide logs
+- `F` freeze/unfreeze logs
+- `S` show/hide state panel
+- `Up/Down` or `J/K` scroll logs
 
----
+## Notes
 
-## License
-
-MIT
+Educational project, not production-ready.
