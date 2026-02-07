@@ -13,17 +13,22 @@ type MemoryEndpointRepository struct {
 	endpoints map[string]endpoint.Endpoint
 }
 
-func NewMemoryEndpointRepository() *MemoryEndpointRepository{
+func NewMemoryEndpointRepository() *MemoryEndpointRepository {
 	return &MemoryEndpointRepository{
 		endpoints: make(map[string]endpoint.Endpoint),
 	}
 }
 
-func (r *MemoryEndpointRepository) Add(endpoints ...endpoint.EndpointConfig) error{
+func (r *MemoryEndpointRepository) Add(endpoints ...endpoint.EndpointConfig) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	for _, v := range endpoints {
-		r.endpoints[v.URL] = endpoint.NewEndpoint(v.URL, v.Interval)
+		normalized, err := endpoint.NormalizeEndpointConfig(v)
+		if err != nil {
+			return err
+		}
+
+		r.endpoints[normalized.URL] = endpoint.NewEndpoint(normalized)
 	}
 	return nil
 }
@@ -32,11 +37,11 @@ func (r *MemoryEndpointRepository) Update(url string, status int, latency time.D
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	if v, c := r.endpoints[url]; c{
+	if v, c := r.endpoints[url]; c {
 		v.Status = status
 		v.Latency = latency
 		v.LastCheck = time.Now()
-		
+
 		// TODO: нужно ли хранить новые статусы в конце тренда
 		if len(v.Trend) >= endpoint.TrendSize {
 			v.Trend = v.Trend[1:]
@@ -44,7 +49,7 @@ func (r *MemoryEndpointRepository) Update(url string, status int, latency time.D
 
 		v.Trend = append(v.Trend, status >= 200 && status < 400)
 
-		slog.Info("Endpoint update: " + fmt.Sprint(v) )
+		slog.Info("Endpoint update: " + fmt.Sprint(v))
 
 		r.endpoints[url] = v
 	}

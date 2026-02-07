@@ -47,7 +47,9 @@ func main() {
 		log.Fatalf("unsupported runtime mode: %s", runtimeCfg.Mode)
 	}
 
-	memoryEndpointRepository.Add(endpointsConfig...)
+	if err := memoryEndpointRepository.Add(endpointsConfig...); err != nil {
+		log.Fatal(err)
+	}
 
 	m := ui.InitialModel(endpointService, logService)
 	p := tea.NewProgram(m)

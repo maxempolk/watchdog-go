@@ -118,10 +118,13 @@ func parseSitesMode(items []string) (*RuntimeConfig, error) {
 			return nil, fmt.Errorf("invalid interval in %q: %w", item, err)
 		}
 
-		endpoints = append(endpoints, endpoint.EndpointConfig{
-			URL:      host,
-			Interval: interval,
-		})
+		cfg := endpoint.NewDefaultEndpointConfig(host, interval)
+		cfg, err = endpoint.NormalizeEndpointConfig(cfg)
+		if err != nil {
+			return nil, fmt.Errorf("invalid sites entry %q: %w", item, err)
+		}
+
+		endpoints = append(endpoints, cfg)
 	}
 
 	return &RuntimeConfig{
@@ -131,7 +134,8 @@ func parseSitesMode(items []string) (*RuntimeConfig, error) {
 }
 
 func parseInterval(raw string) (time.Duration, error) {
-	if d, err := time.ParseDuration(raw); err == nil {
+	trimmed := strings.TrimSpace(raw)
+	if d, err := time.ParseDuration(trimmed); err == nil {
 		if d <= 0 {
 			return 0, fmt.Errorf("interval must be > 0")
 		}
@@ -139,7 +143,7 @@ func parseInterval(raw string) (time.Duration, error) {
 	}
 
 	// Numeric values in sites mode are treated as seconds: example.com:10 -> 10s.
-	seconds, err := strconv.Atoi(raw)
+	seconds, err := strconv.Atoi(trimmed)
 	if err != nil || seconds <= 0 {
 		return 0, fmt.Errorf("use Go duration format (e.g. 5s, 1m) or positive integer seconds")
 	}

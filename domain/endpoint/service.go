@@ -1,35 +1,41 @@
 package endpoint
 
 import (
+	"fmt"
 	"time"
 )
 
 type EndpointService struct {
-	repo EndpointRepository
+	repo          EndpointRepository
 	healthChecker HealthChecker
 }
 
 func NewEndpointService(r EndpointRepository, hc HealthChecker) *EndpointService {
 	return &EndpointService{
-		repo: r,
+		repo:          r,
 		healthChecker: hc,
 	}
 }
 
-func (es *EndpointService) ListEndpoints() []Endpoint{
+func (es *EndpointService) ListEndpoints() []Endpoint {
 	repoKeys := es.repo.GetKeys()
 	endpoints := make([]Endpoint, 0, len(repoKeys))
-	for _, key := range repoKeys{
+	for _, key := range repoKeys {
 		ep, _ := es.repo.Get(key)
 		endpoints = append(endpoints, ep)
 	}
 	return endpoints
 }
 
-func (es *EndpointService) UpdateEndpoint(url string, status int, latency time.Duration) error{
+func (es *EndpointService) UpdateEndpoint(url string, status int, latency time.Duration) error {
 	return es.repo.Update(url, status, latency)
 }
 
-func (es *EndpointService) CheckHealth(url string) (HealthCheckResult, error){
-	return es.healthChecker.Check(url)
+func (es *EndpointService) CheckHealth(url string) (HealthCheckResult, error) {
+	ep, ok := es.repo.Get(url)
+	if !ok {
+		return HealthCheckResult{URL: url}, fmt.Errorf("endpoint %q not found", url)
+	}
+
+	return es.healthChecker.Check(ep)
 }

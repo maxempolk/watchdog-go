@@ -54,7 +54,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.refreshLogs()
 		return m, tickEveryUI(UI_REFRESH_INTERVAL)
 	case checkResultMsg:
-		if err := m.Service.UpdateEndpoint(msg.url, msg.status, msg.latency); err != nil {
+		status := msg.status
+		if msg.err != nil {
+			status = 0
+		}
+
+		if err := m.Service.UpdateEndpoint(msg.url, status, msg.latency); err != nil {
 			slog.Error("failed to update endpoint", "url", msg.url, "error", err)
 			return m, nil
 		}

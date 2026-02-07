@@ -11,8 +11,15 @@ import (
 )
 
 type ResourceSchema struct {
-	Url      string `json:"url"`
-	Interval string `json:"interval"`
+	Url                  string            `json:"url"`
+	Interval             string            `json:"interval"`
+	Method               string            `json:"method"`
+	Headers              map[string]string `json:"headers"`
+	Body                 string            `json:"body"`
+	ExpectedStatus       *int              `json:"expected_status"`
+	ExpectedBodyContains string            `json:"expected_body_contains"`
+	Timeout              string            `json:"timeout"`
+	FollowRedirects      *bool             `json:"follow_redirects"`
 }
 
 type resourcesDataSchema struct {
@@ -49,10 +56,39 @@ func Fetch(path string) ([]endpoint.EndpointConfig, error) {
 			return nil, fmt.Errorf("config %q: resources[%d].interval is invalid: %w", path, i, err)
 		}
 
-		endpoints[i] = endpoint.EndpointConfig{
-			URL:      url,
-			Interval: parsedInterval,
+		cfg := endpoint.NewDefaultEndpointConfig(url, parsedInterval)
+		if strings.TrimSpace(el.Method) != "" {
+			cfg.Method = el.Method
 		}
+		if len(el.Headers) > 0 {
+			cfg.Headers = el.Headers
+		}
+		if el.Body != "" {
+			cfg.Body = el.Body
+		}
+		if el.ExpectedStatus != nil {
+			cfg.ExpectedStatus = *el.ExpectedStatus
+		}
+		if strings.TrimSpace(el.ExpectedBodyContains) != "" {
+			cfg.ExpectedBodyContains = el.ExpectedBodyContains
+		}
+		if strings.TrimSpace(el.Timeout) != "" {
+			timeout, err := parseInterval(el.Timeout)
+			if err != nil {
+				return nil, fmt.Errorf("config %q: resources[%d].timeout is invalid: %w", path, i, err)
+			}
+			cfg.Timeout = timeout
+		}
+		if el.FollowRedirects != nil {
+			cfg.FollowRedirects = *el.FollowRedirects
+		}
+
+		cfg, err = endpoint.NormalizeEndpointConfig(cfg)
+		if err != nil {
+			return nil, fmt.Errorf("config %q: resources[%d] is invalid: %w", path, i, err)
+		}
+
+		endpoints[i] = cfg
 	}
 
 	return endpoints, nil
